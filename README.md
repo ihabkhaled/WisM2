@@ -1,3 +1,6 @@
-Follow this link to generate a keystore :
+This is my app WisM
 
-https://stackoverflow.com/questions/35935060/how-can-i-generate-an-apk-that-can-run-without-server-with-react-native
+This app for emergency
+Write down your phone number
+
+Once phone is saved, Call the phone with this emergency number.
