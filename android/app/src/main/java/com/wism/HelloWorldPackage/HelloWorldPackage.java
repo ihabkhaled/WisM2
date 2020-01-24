@@ -1,10 +1,10 @@
-package com.awesomeproject.HelloWorldPackage;
+package com.wism.HelloWorldPackage;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
-import com.awesomeproject.HelloWorldModule;
+import com.wism.HelloWorldModule;
 
 import java.util.ArrayList;
 import java.util.Collections;

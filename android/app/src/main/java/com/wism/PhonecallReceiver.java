@@ -1,4 +1,4 @@
-package com.awesomeproject;
+package com.wism;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

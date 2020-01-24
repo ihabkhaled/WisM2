@@ -1,8 +1,8 @@
 platform :ios, '9.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-target 'AwesomeProject' do
-  # Pods for AwesomeProject
+target 'WISM' do
+  # Pods for WISM
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
@@ -40,7 +40,7 @@ target 'AwesomeProject' do
 
   pod 'react-native-document-picker', :path => '../node_modules/react-native-document-picker'
 
-  target 'AwesomeProjectTests' do
+  target 'WISMTests' do
     inherit! :search_paths
     # Pods for testing
   end
@@ -48,10 +48,10 @@ target 'AwesomeProject' do
   use_native_modules!
 end
 
-target 'AwesomeProject-tvOS' do
-  # Pods for AwesomeProject-tvOS
+target 'WISM-tvOS' do
+  # Pods for WISM-tvOS
 
-  target 'AwesomeProject-tvOSTests' do
+  target 'WISM-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end

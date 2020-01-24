@@ -1,9 +1,9 @@
-package com.awesomeproject;
+package com.wism;
 
 import android.app.Application;
 import android.content.Context;
 
-import com.awesomeproject.HelloWorldPackage.HelloWorldPackage;
+import com.wism.HelloWorldPackage.HelloWorldPackage;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;

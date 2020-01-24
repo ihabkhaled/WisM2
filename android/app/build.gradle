@@ -128,7 +128,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.awesomeproject"
+        applicationId "com.wism"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -152,10 +152,10 @@ android {
             }
 	}
         debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            storeFile file('theKey.keystore')
+            storePassword '123456'
+            keyAlias 'theKey'
+            keyPassword '123456'
         }
     }
     buildTypes {
