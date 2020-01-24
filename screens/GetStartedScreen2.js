@@ -22,6 +22,7 @@ export default class GetStartedScreen2 extends Component {
       dropMenu:false,
       number: '',
       loaded: false,
+      text: '',
     };
   }
 
@@ -46,6 +47,7 @@ export default class GetStartedScreen2 extends Component {
   _saveMobile = () => {
     let text = this.state.text;
     HelloWorld.myMobile(text)
+    this.setState({ text: '' }); 
     this.props.navigation.navigate('DrawerNav');
  }
 

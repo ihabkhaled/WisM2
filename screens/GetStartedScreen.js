@@ -30,6 +30,7 @@ export default class GetStartedScreen extends Component {
   _savePassword = () => {
     let text = this.state.thePassword;
     HelloWorld.setPassword(text);
+    this.setState({ thePassword: '' });
     this.props.navigation.navigate('GetStartedNumber');
   }
 
@@ -96,13 +97,13 @@ export default class GetStartedScreen extends Component {
                     </View>
 
                     <View style={styles.getStartedContainer}>
-                      <Text style={styles.getStartedText}>Please write down the parent password to use it in the future as a verficiation</Text>
+                      <Text style={styles.getStartedText}>Please write down the parent password you want to use it in the future as a verficiation</Text>
                     </View>
 
                     <View style={{ padding: 10 }}>
-                      <TextInput 
+                      <TextInput secureTextEntry={true}
                         style={{ height: 40, borderBottomWidth: 2, borderBottomColor: '#000000' }}
-                        placeholder="Enter Password"
+                        placeholder="Enter Parent Password"
                         onChangeText={(thePassword) => this.setState({ thePassword })}
                         value={this.state.thePassword}
                       />

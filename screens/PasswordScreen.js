@@ -103,13 +103,13 @@ export default class PasswordScreen extends Component {
                 </View>
 
                 <View style={{ padding: 10 }}>
-                    <TextInput 
+                    <TextInput secureTextEntry={true}
                         style={{ height: 40, borderBottomWidth: 2, borderBottomColor: '#000000' }}
-                        placeholder="Old Password"
+                        placeholder="Enter Current Password"
                         onChangeText={(currentPassword) => this.setState({ currentPassword })}
                         value={this.state.currentPassword}
                     />
-                    <TextInput 
+                    <TextInput secureTextEntry={true}
                         style={{ height: 40, borderBottomWidth: 2, borderBottomColor: '#000000' }}
                         placeholder="Enter New Password"
                         onChangeText={(newPassword) => this.setState({ newPassword })}

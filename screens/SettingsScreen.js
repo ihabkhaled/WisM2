@@ -35,6 +35,8 @@ export default class SettingsScreen extends Component {
 
   async _myMethod(theMobile) {
       HelloWorld.myMobile(theMobile)
+      this.setState({ password: ''})
+      this.setState({ text: ''})
       this.setState({ number: theMobile })
     }
 
@@ -166,9 +168,9 @@ export default class SettingsScreen extends Component {
                 </View>
 
                 <View style={{ padding: 10 }}>
-                    <TextInput 
+                    <TextInput secureTextEntry={true}
                         style={{ height: 40, borderBottomWidth: 2, borderBottomColor: '#000000' }}
-                        placeholder="Enter Password"
+                        placeholder="Enter Current Password"
                         onChangeText={(password) => this.setState({ password })}
                         value={this.state.password}
                     />
