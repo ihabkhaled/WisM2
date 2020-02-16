@@ -10,6 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "country-data": "0.0.31",
     "react": "16.9.0",
     "react-devtools": "^3.6.3",
     "react-native": "0.61.5",

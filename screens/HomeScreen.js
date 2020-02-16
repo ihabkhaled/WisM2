@@ -8,8 +8,16 @@ import {
   TextInput,
   KeyboardAvoidingView,
 } from 'react-native';
+import CallDetectorManager from 'react-native-call-detection'
+import {PermissionsAndroid , Vibration, ToastAndroid, Linking} from 'react-native';
 
 // const axios = require('axios');
+
+var countries        = require('country-data').countries,
+    currencies       = require('country-data').currencies,
+    regions          = require('country-data').regions,
+    languages        = require('country-data').languages,
+    callingCountries = require('country-data').callingCountries;
 
 export default class HomeScreen extends Component {
   constructor(props) {
@@ -21,7 +29,31 @@ export default class HomeScreen extends Component {
       text: '',
       text2: '',
       number: '',
+      callingNumber: ''
     };
+  }
+
+   requestCallPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
+        {
+          title: 'The app need Call Log Permission',
+          message:
+            'The app need Call Log Permission ' +
+            'So you can access the feature',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the Call Log');
+      } else {
+        console.log(' Call Log permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
   }
 
    _retrieveMobile() {
@@ -42,7 +74,102 @@ export default class HomeScreen extends Component {
     this.props.navigation.toggleDrawer()
   }
 
+startListenerTapped() {
+  this.callDetector = new CallDetectorManager((event, number)=> {
+    if (event === 'Disconnected') {
+      HelloWorld.getNumber( (err) => {
+
+      }, (msg) => {
+            if(msg && msg.length != 0 && !isNaN(msg))
+            {
+                if(this.state.callingNumber == msg)
+                {
+                  ToastAndroid.showWithGravity('Bye Daddy <3', ToastAndroid.LONG,ToastAndroid.CENTER);
+                  Vibration.cancel();
+                }
+            }
+      })
+    } 
+    else if (event === 'Connected') {
+      
+    } 
+    else if (event === 'Incoming') {
+      if(!this.state.callingNumber)
+      {
+        this.setState({ callingNumber: number })
+      }
+
+      HelloWorld.getNumber( (err) => {
+
+      }, (msg) => {
+            if(msg && msg.length != 0 && !isNaN(msg))
+            {
+                if(this.state.callingNumber == msg)
+                {
+                  // Linking.openURL('whatsapp://send?text=daddy&phone=+2'+number)
+                  ToastAndroid.showWithGravity('It\' Your Daddy! <3', ToastAndroid.LONG,ToastAndroid.CENTER);
+                  const PATTERN = 2000;
+                  Vibration.vibrate(PATTERN, true);
+                }
+            }
+      })
+    }
+    else if (event === 'Dialing') {
+      // console.log('Dialing')
+    } 
+    else if (event === 'Offhook') {
+      HelloWorld.getNumber( (err) => {
+        
+      }, (msg) => {
+            if(msg && msg.length != 0 && !isNaN(msg))
+            {
+                if(this.state.callingNumber == msg)
+                {
+                  ToastAndroid.showWithGravity('Hello Daddy <3', ToastAndroid.LONG,ToastAndroid.CENTER);
+                  Vibration.cancel();
+                }
+            }
+      })
+    }
+    else if (event === 'Missed') {
+      // console.log('Missed')
+    }
+},
+false, // if you want to read the phone number of the incoming call [ANDROID], otherwise false
+(err)=>{ console.log(err) }, // callback if your permission got denied [ANDROID] [only if you want to read incoming number] default: console.error
+{
+title: 'Phone State Permission',
+message: 'This app needs access to your phone state in order to react and/or to adapt to incoming calls.'
+} // a custom permission request message to explain to your user, why you need the permission [recommended] - this is the default one
+)
+
+}
+
+stopListenerTapped() {
+  this.callDetector && this.callDetector.dispose();
+}
+
   render() {
+    for(var c in countries)
+    {
+      if(Array.isArray(countries[c].countryCallingCodes))
+        {
+          if(countries[c].countryCallingCodes[0])
+          {
+            let prefix = countries[c].alpha2;
+            let countryName = countries[c].name;
+            let countryCallCode = countries[c].countryCallingCodes[0];
+            // console.log(prefix + " " + countryName + " " + countryCallCode)
+          }
+        }
+    }
+
+    this.requestCallPermission();
+    try {    
+      this.startListenerTapped(); 
+    } catch(err) {
+      console.log(err);
+    }
     return (
         <PaperProvider>
           <StatusBar backgroundColor="#1666b5" barStyle="light-content" />
