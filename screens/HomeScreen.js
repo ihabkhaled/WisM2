@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Provider as PaperProvider,Appbar,IconButton,Button as PButton,Avatar,Menu} from 'react-native-paper';
 import { StyleSheet,StatusBar,View,Image,Button,Text,ScrollView,SafeAreaView} from 'react-native';
 import 'react-native-gesture-handler'
-import {NativeModules} from 'react-native';
+import {NativeModules,NativeEventEmitter} from 'react-native';
 var HelloWorld = NativeModules.HelloWorld;
 import {
   TextInput,
@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import CallDetectorManager from 'react-native-call-detection'
 import {PermissionsAndroid , Vibration, ToastAndroid, Linking} from 'react-native';
+import SystemSetting from 'react-native-system-setting'
+import Geolocation from 'react-native-geolocation-service';
 
 // const axios = require('axios');
 
@@ -47,10 +49,41 @@ export default class HomeScreen extends Component {
         },
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('You can use the Call Log');
+        // console.log('You can use the Call Log');
       } else {
-        console.log(' Call Log permission denied');
+        // console.log(' Call Log permission denied');
       }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+
+  requestLocationPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'The app need Location Permission',
+          message:
+            'The app need Location Permission ' +
+            'So you can access the feature',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        // console.log('You can use the Location');
+      } else {
+        // console.log('Location permission denied');
+      }
+      Geolocation.getCurrentPosition(
+        (position) => {
+
+        },
+        (error) => {
+
+        }
+      );
     } catch (err) {
       console.warn(err);
     }
@@ -106,10 +139,8 @@ startListenerTapped() {
             {
                 if(this.state.callingNumber == msg)
                 {
-                  // Linking.openURL('whatsapp://send?text=daddy&phone=+2'+number)
                   ToastAndroid.showWithGravity('It\' Your Daddy! <3', ToastAndroid.LONG,ToastAndroid.CENTER);
-                  const PATTERN = 2000;
-                  Vibration.vibrate(PATTERN, true);
+                  this.triggerDaddy(number);
                 }
             }
       })
@@ -149,6 +180,101 @@ stopListenerTapped() {
   this.callDetector && this.callDetector.dispose();
 }
 
+triggerDaddy = (number) => {
+  const PATTERN = 2000;
+  Vibration.vibrate(PATTERN, true);
+
+  var val = 1;
+  var config = {};
+  const SystemSettingNative = NativeModules.SystemSetting;
+  const eventEmitter = new NativeEventEmitter(SystemSettingNative)
+
+  config = {};
+  config = Object.assign({
+    playSound: true,
+    type: 'system',
+    showUI: true
+  }, config)
+  SystemSettingNative.setVolume(val, config)
+
+  config = {};
+  config = Object.assign({
+    playSound: true,
+    type: 'music',
+    showUI: true
+  }, config)
+  SystemSettingNative.setVolume(val, config)
+
+  config = {};
+  config = Object.assign({
+    playSound: true,
+    type: 'call',
+    showUI: true
+  }, config)
+  SystemSettingNative.setVolume(val, config)
+
+  config = {};
+  config = Object.assign({
+      playSound: true,
+      type: 'ring',
+      showUI: true
+  }, config)
+  SystemSettingNative.setVolume(val, config)
+
+  config = {};
+  config = Object.assign({
+    playSound: true,
+    type: 'alarm',
+    showUI: true
+  }, config)
+  SystemSettingNative.setVolume(val, config)
+
+  config = {};
+  config = Object.assign({
+    playSound: true,
+    type: 'notification',
+    showUI: true
+  }, config)
+  SystemSettingNative.setVolume(val, config)
+
+  /* SystemSetting.switchLocation(()=>{
+  
+  }) */
+
+  Geolocation.getCurrentPosition(
+      (position) => {
+          var text = "Latitude : " + position.coords.latitude;
+          text += " ,Longitude : " + position.coords.longitude;
+          var locationAttrs = this.convertDMS(position.coords.latitude,position.coords.longitude);
+          var locationURL = "https://www.google.com/maps/place/"+locationAttrs;
+          console.log(locationURL)
+      },
+      (error) => {
+
+      }
+  );
+}
+
+convertDMS = (lat, lng) => {
+  var latitude = this.toDegreesMinutesAndSeconds(lat);
+  var latitudeCardinal = lat >= 0 ? "N" : "S";
+
+  var longitude = this.toDegreesMinutesAndSeconds(lng);
+  var longitudeCardinal = lng >= 0 ? "E" : "W";
+
+  return latitude + "" + latitudeCardinal + "+" + longitude + "" + longitudeCardinal;
+}
+
+toDegreesMinutesAndSeconds = (coordinate) => {
+  var absolute = Math.abs(coordinate);
+  var degrees = Math.floor(absolute);
+  var minutesNotTruncated = (absolute - degrees) * 60;
+  var minutes = Math.floor(minutesNotTruncated);
+  var seconds = Math.floor((minutesNotTruncated - minutes) * 60);
+
+  return degrees + "°" + minutes + "'" + seconds + "''";
+}
+
   render() {
     for(var c in countries)
     {
@@ -165,6 +291,8 @@ stopListenerTapped() {
     }
 
     this.requestCallPermission();
+    this.requestLocationPermission();
+
     try {    
       this.startListenerTapped(); 
     } catch(err) {
