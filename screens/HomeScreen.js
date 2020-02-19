@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Provider as PaperProvider,Appbar,IconButton,Button as PButton,Avatar,Menu} from 'react-native-paper';
 import { StyleSheet,StatusBar,View,Image,Button,Text,ScrollView,SafeAreaView} from 'react-native';
 import 'react-native-gesture-handler'
-import {NativeModules,NativeEventEmitter} from 'react-native';
+import {NativeModules,NativeEventEmitter,AsyncStorage} from 'react-native';
 var HelloWorld = NativeModules.HelloWorld;
 import {
   TextInput,
@@ -31,7 +31,8 @@ export default class HomeScreen extends Component {
       text: '',
       text2: '',
       number: '',
-      callingNumber: ''
+      callingNumber: '',
+      countryCode:''
     };
   }
 
@@ -89,6 +90,17 @@ export default class HomeScreen extends Component {
     }
   }
 
+  _retrieveCountryCode = async () => {
+    try {
+      const value = await AsyncStorage.getItem('theCountryCode');
+      if (value !== null && this.state.countryCode == "") {
+        await this.setState({ countryCode: value })
+      }
+    } catch (error) {
+      // Error retrieving data
+    }
+  };
+
    _retrieveMobile() {
     HelloWorld.getMobileNumber()
   }
@@ -107,7 +119,7 @@ export default class HomeScreen extends Component {
     this.props.navigation.toggleDrawer()
   }
 
-startListenerTapped() {
+startListenerTapped = () => {
   this.callDetector = new CallDetectorManager((event, number)=> {
     if (event === 'Disconnected') {
       HelloWorld.getNumber( (err) => {
@@ -181,6 +193,8 @@ stopListenerTapped() {
 }
 
 triggerDaddy = (number) => {
+  this._retrieveCountryCode();
+  let theCountryCode = this.state.countryCode;
   const PATTERN = 2000;
   Vibration.vibrate(PATTERN, true);
 
@@ -247,7 +261,7 @@ triggerDaddy = (number) => {
           text += " ,Longitude : " + position.coords.longitude;
           var locationAttrs = this.convertDMS(position.coords.latitude,position.coords.longitude);
           var locationURL = "https://www.google.com/maps/place/"+locationAttrs;
-          console.log(locationURL)
+          console.log(theCountryCode + number + " " + locationURL)
       },
       (error) => {
 
@@ -276,22 +290,8 @@ toDegreesMinutesAndSeconds = (coordinate) => {
 }
 
   render() {
-    for(var c in countries)
-    {
-      if(Array.isArray(countries[c].countryCallingCodes))
-        {
-          if(countries[c].countryCallingCodes[0])
-          {
-            let prefix = countries[c].alpha2;
-            let countryName = countries[c].name;
-            let countryCallCode = countries[c].countryCallingCodes[0];
-            // console.log(prefix + " " + countryName + " " + countryCallCode)
-          }
-        }
-    }
-
-    this.requestCallPermission();
     this.requestLocationPermission();
+    this.requestCallPermission();
 
     try {    
       this.startListenerTapped(); 
@@ -311,7 +311,7 @@ toDegreesMinutesAndSeconds = (coordinate) => {
               subtitle="Home"
             />
             <Appbar.Action icon="settings" onPress={() => { this.props.navigation.navigate('Settings'); this._handleSettings(); }} />
-            <Appbar.Action icon="phone" onPress={this._retrieveMobile} />
+            <Appbar.Action icon="phone" onPress={ () => { this._retrieveMobile() }} />
           </Appbar>
 
             <View>
@@ -328,7 +328,7 @@ toDegreesMinutesAndSeconds = (coordinate) => {
 
                 <View style={styles.getStartedContainer}>
                   <Text style={styles.getStartedText}>You'll know whenever you need where are they.</Text>
-                  <View style={{paddingTop: '40%'}}><Button id="submitButton" title="Check Mobile Number" onPress={this._retrieveMobile} /></View>
+                  <View style={{paddingTop: '40%'}}><Button id="submitButton" title="Check Mobile Number" onPress={() => { this._retrieveMobile() }} /></View>
                 </View>
             </View>
         </PaperProvider> 
